@@ -1,8 +1,8 @@
-/* xsh_disksave.c - xsh_disksave */
+/* xsh_flush.c - xsh_flush */
   
 #include <xinu.h>
 
-shellcmd xsh_disksave(int nargs, char *args[])
+shellcmd xsh_flush(int nargs, char *args[])
 {
 
         /* For argument '--help', emit help about the 'memstat' command */

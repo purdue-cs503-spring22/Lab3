@@ -22,7 +22,7 @@
 
 #define FS_IOCTL_BLOCK_CACHE 7	/* Enable block cache 				*/
 #define	BLOCK_CACHE_SIZE 5 	/* Cache size, unit: number of blocks 		*/
-#define FS_IOCTL_CRASH_RECOVERY	8 /* Enable journaling for crash recovery 	*/ 
+#define FS_IOCTL_CRASH_RECOVERY	8 /* Enable journaling for crash recovery 	*/
 #define FS_IOCTL_LOCALITY	9 /* Enable minimization of fragmentation, increase access locality */
 
 extern struct	super	superblock;
@@ -45,11 +45,18 @@ struct directory_datablk {
 	struct file dir_entries[MAX_DIR_ENTRIES_PER_BLOCK];
 };
 
-// A jentry consists of an entry of the type "WRITE(block, data)"
-// "block" is a field in the "struct jentry"
-// "data" is stored in the respective journal data block, associated with this jentry
+#define JENTRY_TYPE_WRITE 0
+#define JENTRY_TYPE_START 1
+#define JENTRY_TYPE_END 2
+
+// A jentry consists of an entry of the type "WRITE(block, data), "START TX" or "END TX"
+// For a write entry:
+//   "block" is stored in the "struct jentry"
+//   "data" is stored in the respective journal data block, associated with
+//          this jentry (Nth jentry corresponds to the Nth journal data block)
 struct jentry {
 	int valid;
+	int type; //
 	blkid32 block;
 };
 

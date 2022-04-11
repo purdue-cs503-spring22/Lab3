@@ -73,8 +73,8 @@ extern	shellcmd  xsh_uptime	(int32, char *[]);
 /* in file xsh_help.c */
 extern	shellcmd  xsh_help	(int32, char *[]);
 
-/* in file xsh_disksave.c */
-extern	shellcmd  xsh_disksave	(int32, char *[]);
+/* in file xsh_flush.c */
+extern	shellcmd  xsh_flush	(int32, char *[]);
 
 /* in file xsh_diskreset.c */
 extern 	shellcmd  xsh_diskreset	(int32, char *[]);
