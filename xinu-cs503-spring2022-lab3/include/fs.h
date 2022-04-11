@@ -25,6 +25,8 @@
 #define FS_IOCTL_CRASH_RECOVERY	8 /* Enable journaling for crash recovery 	*/
 #define FS_IOCTL_LOCALITY	9 /* Enable minimization of fragmentation, increase access locality */
 
+#define NUM_SPECIAL_SECTIONS    3 /* 3 special sections: block 0 (partition table, etc), 1 (superblock), 2 (bitmap) */
+
 extern struct	super	superblock;
 
 struct indirectblk {
@@ -61,8 +63,11 @@ struct jentry {
 };
 
 struct super 	{
-	int beginning;
-	int end;
+	// The superblock needs to have the offsets from the beginning of the superblock to 
+        // the start and end of sections described in the diagram.
+        // Important sections: block 0 (partition tables, etc), 1 (superblock), 2 (bitmap)
+	int beginnings[NUM_SPECIAL_SECTIONS];
+	// int ends[NUM_SPECIAL_SECTIONS];
 	int magicnumber;
 	int total_free_blocks;
 
