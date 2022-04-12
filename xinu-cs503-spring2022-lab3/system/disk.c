@@ -48,7 +48,7 @@ int32 read_sector(int32 sector_number, char * sector_out) {
         struct  dsecentry       *dsecptr;               /* Ptr to disk block entry      */
         dsecptr = &dsectortab[sector_number];
         // Writing the contents to sector_out
-        strcpy(sector_out, dsecptr->dsector);
+	memcpy(sector_out, dsecptr->dsector, SECTOR_SIZE);
 
         restore(mask);
         return OK;
@@ -70,17 +70,9 @@ int32 write_sector(int32 sector_number, char * sector_in) {
         struct  dsecentry       *dsecptr;               /* Ptr to disk block entry      */
         dsecptr = &dsectortab[sector_number];
         // Writing the contents to buffer
-        int32 size = strlen(sector_in);
-        if (size > SECTOR_SIZE) {
-                wait(dsecptr->bufmutex);
-                strncpy(dsecptr->buffer, sector_in, SECTOR_SIZE);
-                signal(dsecptr->bufmutex);
-        }
-        else {
-		wait(dsecptr->bufmutex);
-                strcpy(dsecptr->buffer, sector_in);
-                signal(dsecptr->bufmutex);
-        }
+        wait(dsecptr->bufmutex);
+	memcpy(dsecptr->buffer, sector_in, SECTOR_SIZE);        
+        signal(dsecptr->bufmutex);
 
         restore(mask);
         return OK;
@@ -101,7 +93,7 @@ int32 flush() {
         for (i = 0; i < NSECTORS; i++) {
                 dsecptr = &dsectortab[i];
                 // flush is not atomic
-                strcpy(dsecptr->dsector, dsecptr->buffer);
+        	memcpy(dsecptr->dsector, dsecptr->buffer, SECTOR_SIZE);
         }
 
   	restore(mask);
