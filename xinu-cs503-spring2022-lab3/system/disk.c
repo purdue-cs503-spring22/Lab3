@@ -70,7 +70,7 @@ int32 write_sector(int32 sector_number, char * sector_in) {
         struct  dsecentry       *dsecptr;               /* Ptr to disk block entry      */
         dsecptr = &dsectortab[sector_number];
         // Writing the contents to buffer
-        int32 size = sizeof(sector_in);
+        int32 size = strlen(sector_in);
         if (size > SECTOR_SIZE) {
                 wait(dsecptr->bufmutex);
                 strncpy(dsecptr->buffer, sector_in, SECTOR_SIZE);
