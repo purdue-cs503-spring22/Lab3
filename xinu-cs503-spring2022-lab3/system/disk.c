@@ -14,7 +14,12 @@ int32 disk() {
 	for (i = 0; i < NSECTORS; i++) {
 		dsecptr = &dsectortab[i];
 		dsecptr->dsecnum = i;
-		dsecptr->bufmutex = semcreate(1); 
+		dsecptr->bufmutex = semcreate(1);
+		memset(dsecptr->dsector, '\0', BLOCK_SIZE); 
+		memset(dsecptr->buffer, '\0', BLOCK_SIZE);
+		for (int j = 0; j < SECTOR_SIZE; j++) {
+			dsecptr->buffer_set[j] = 0;
+		}
 		//kprintf("DEBUG: creating semaphore %d\n", dsecptr->bufmutex); 
 	}
 
@@ -49,7 +54,6 @@ int32 read_sector(int32 sector_number, char * sector_out) {
         dsecptr = &dsectortab[sector_number];
         // Writing the contents to sector_out
 	memcpy(sector_out, dsecptr->dsector, SECTOR_SIZE);
-
         restore(mask);
         return OK;
 }
@@ -74,6 +78,8 @@ int32 write_sector(int32 sector_number, char * sector_in) {
 	memcpy(dsecptr->buffer, sector_in, SECTOR_SIZE);        
         signal(dsecptr->bufmutex);
 
+	// Mark the buffer_set entry
+	dsecptr->buffer_set[sector_number] = 1;
         restore(mask);
         return OK;
 }
@@ -93,7 +99,9 @@ int32 flush() {
         for (i = 0; i < NSECTORS; i++) {
                 dsecptr = &dsectortab[i];
                 // flush is not atomic
-        	memcpy(dsecptr->dsector, dsecptr->buffer, SECTOR_SIZE);
+		if (dsecptr->buffer_set[i]) {
+        		memcpy(dsecptr->dsector, dsecptr->buffer, SECTOR_SIZE);
+		}
         }
 
   	restore(mask);

@@ -8,13 +8,14 @@
 #define NSECTORS	50		/* Number of disk sectors, if not defined */
 #endif
 
-#define SECTOR_SIZE 	512		/* Each sector has fixed size 256 */
+#define SECTOR_SIZE 	512		/* Each sector has fixed size 512 */
 
 /* Disk sector entry */
 struct	dsecentry	{
 	int32	dsecnum;		/* Sector Number		*/
-	char	dsector[SECTOR_SIZE];		/* A sector of size SECTOR_SIZE	*/
-	char 	buffer[SECTOR_SIZE];			/* Buffer for the current sector*/
+	char	dsector[SECTOR_SIZE];	/* A sector of size SECTOR_SIZE	*/
+	int	buffer_set[SECTOR_SIZE];/* Keep track of if the buffer entry is set	*/
+	char 	buffer[SECTOR_SIZE];	/* Buffer for the current sector*/
 					/* Buffer Lost during crash	*/
 	sid32   bufmutex;       	/* Mutex Lock for write buffer	*/
 };
